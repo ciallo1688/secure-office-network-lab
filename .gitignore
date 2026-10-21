@@ -1,0 +1,16 @@
+# Python virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Testing and build files
+.pytest_cache/
+dist/
+build/
+
+# Local configuration and secrets
+.env
+.env.*
+
