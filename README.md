@@ -44,7 +44,7 @@ Milestone 0: Environment setup and project initialization.
 
 - [x] M0 — Ubuntu development environment and GitHub repository setup
 - [x] M1 — Manual network namespaces, veth connectivity, IPv4 routing and packet analysis
-- [ ] M2 — Python-based network provisioning and CLI
+- [X] M2 — Python-based network provisioning and CLI
 - [ ] M3 — Firewall and network segmentation policies
 - [ ] M4 — Automated network validation and reporting
 - [ ] M5 — Documentation, testing and CI improvements
