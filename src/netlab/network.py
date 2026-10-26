@@ -1,6 +1,6 @@
 import subprocess
 
-ALLOWED_NAMESPACES = {"staff", "router", "server"}
+ALLOWED_NAMESPACES = {"staff", "guest", "router", "server"}
 
 def run_command(command):
     try:
@@ -94,7 +94,7 @@ def enable_ip_forwarding():
 def setup_network():
     existing = []
 
-    for name in ["staff", "router", "server"]:
+    for name in ["staff", "router", "server", "guest"]:
         if namespace_exists(name):
             existing.append(name)
     
@@ -107,27 +107,36 @@ def setup_network():
     create_namespace("staff")
     create_namespace("router")
     create_namespace("server")
+    create_namespace("guest")
 
     create_veth_pair("veth-staff", "veth-rstaff")
     create_veth_pair("veth-server", "veth-rserver")
+    create_veth_pair("veth-guest", "veth-rguest")
 
     move_interface("veth-staff", "staff")
     move_interface("veth-rstaff", "router")
     move_interface("veth-server", "server")
     move_interface("veth-rserver", "router")
-
+    move_interface("veth-guest", "guest")
+    move_interface("veth-rguest", "router")
+    
     assign_ip("staff", "veth-staff", "10.10.10.2/24")
     assign_ip("router", "veth-rstaff", "10.10.10.1/24")
     assign_ip("server", "veth-server", "10.10.30.2/24")
     assign_ip("router", "veth-rserver", "10.10.30.1/24")
+    assign_ip("guest", "veth-guest", "10.10.20.2/24")
+    assign_ip("router", "veth-rguest", "10.10.20.1/24")
 
     set_interface_up("staff", "veth-staff")
     set_interface_up("router", "veth-rstaff")
     set_interface_up("server", "veth-server")
     set_interface_up("router", "veth-rserver")
+    set_interface_up("guest", "veth-guest")
+    set_interface_up("router", "veth-rguest")
 
     add_default_route("staff", "10.10.10.1")
     add_default_route("server", "10.10.30.1")
+    add_default_route("guest", "10.10.20.1")
 
     enable_ip_forwarding()
 
@@ -136,7 +145,7 @@ def setup_network():
 def show_status():
     print("=== SecureNet Lab Status ===")
 
-    for name in ["staff", "router", "server"]:
+    for name in ["staff", "router", "server", "guest"]:
         if namespace_exists(name):
             print(f"{name}: EXISTS")
         else:
@@ -149,6 +158,7 @@ def teardown_network():
         "staff": ["veth-staff"],
         "router": ["veth-rstaff", "veth-rserver"],
         "server": ["veth-server"],
+        "guest": ["veth-guest"],
     }
 
     for namespace, interfaces in expected_interfaces.items():
@@ -170,7 +180,7 @@ def teardown_network():
         print("Teardown cancelled.")
         return
 
-    for namespace in ["staff", "server", "router"]:
+    for namespace in ["staff", "server", "router", "guest"]:
         delete_namespace(namespace)
 
     print("=== SecureNet Lab teardown complete ===")
