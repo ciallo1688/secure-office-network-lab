@@ -14,3 +14,5 @@ build/
 .env
 .env.*
 
+# Generated security reports
+reports/

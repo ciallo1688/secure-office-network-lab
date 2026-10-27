@@ -109,6 +109,12 @@ def setup_network():
     create_namespace("server")
     create_namespace("guest")
 
+    for namespace in ["staff", "guest", "router", "server"]:
+        run_command([
+            "ip", "netns", "exec", namespace,
+            "ip", "link", "set", "lo", "up"
+        ])
+
     create_veth_pair("veth-staff", "veth-rstaff")
     create_veth_pair("veth-server", "veth-rserver")
     create_veth_pair("veth-guest", "veth-rguest")
